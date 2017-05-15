@@ -11,7 +11,7 @@ def orthonormal(size):
 
 omega = 1.
 
-class ELM_AE_o(object):
+class ELM_AE(object):
     def __init__(self, sess, config):
         '''
         Args:
@@ -26,8 +26,7 @@ class ELM_AE_o(object):
         self.struct = config.struct
         struct = self.struct
         self._batch_size = config.batch_size
-        self._input_len = config.input_len
-        self._hidden_num = config.hidden_num
+
 
         ############ define variables ##################
         self._W = tf.Variable(
@@ -61,7 +60,7 @@ class ELM_AE_o(object):
         #  _beta_s = (H_T*H + I/om)^(-1)*H_T*T  (KxL)
         identity = tf.constant(np.identity(struct[2]), dtype=tf.float32)
         self._beta_s = tf.matmul(
-            tf.matmul(tf.matrix_inverse(tf.matmul(self.H0_T, self.H0) + identity / omega), self.H0_T), self._x0)
+            tf.matmul(tf.matrix_inverse(tf.matmul(self.H0_T, self.H0) + identity / omega), self.H0_T), self.X0)
         self.embedding = tf.sigmoid(tf.matmul(self.X0, tf.transpose(self._beta_s)))
 
         self.newX0 = tf.matmul(self.H0, self._beta_s)
@@ -97,7 +96,7 @@ class ELM_AE_o(object):
         saver.restore(self.sess, path)
         self.is_Init = True
 
-    def do_variables_init(self, DBN_init=0):
+    def do_variables_init(self):
         init = tf.global_variables_initializer()
         self._sess.run(init)
         self.is_Init = True

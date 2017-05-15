@@ -19,6 +19,12 @@ class Graph(object):
         print("getData done")
         print("Vertexes : %d  Edges : %d " % (self.N, self.E))
 
+    # def load_label_data(self, filename):
+    #     self.label = np.zeros([self.N], np.int_)
+    #     with open(filename, 'r') as fin:
+    #         for line in fin:
+    #             line = line.
+
     def sample(self, batch_size, do_shuffle=True):
         if self.is_epoch_end:
             if do_shuffle:
