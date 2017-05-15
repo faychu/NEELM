@@ -18,8 +18,8 @@ if __name__ == "__main__":
     converge_count = 0
     time_consumed = 0
     batch_n = 0
+    epochs = 0
     while(True):
         mini_batch= graph_data.sample(config.batch_size)
         st_time = time.time()
-    print(mini_batch.X)
-    print(mini_batch.adjacent_matriX)
+
