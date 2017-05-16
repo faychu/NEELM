@@ -38,9 +38,9 @@ class ELM_AE(object):
         self._beta_s = tf.Variable(
             tf.zeros([struct[2], struct[1]]),
             trainable=False, dtype=tf.float32)
-        self.W_i = tf.Variable(tf.zeros([struct[0], struct[1]]), name='W_i', trainable=True)
+        self.W_i = tf.Variable(tf.random_normal([struct[0], struct[1]]), name='W_i', trainable=True)
         self.b_i = tf.Variable(tf.zeros([struct[1]]), name='b_i', trainable=True)
-        self.W_o = tf.Variable(tf.zeros([struct[1], struct[0]]), name='W_o', trainable=True)
+        self.W_o = tf.Variable(tf.random_normal([struct[1], struct[0]]), name='W_o', trainable=True)
         self.b_o = tf.Variable(tf.zeros([struct[0]]), name='b_o', trainable=True)
         ###############################################
 
@@ -55,14 +55,14 @@ class ELM_AE(object):
     def __make_compute_graph(self):
         struct = self.struct
         self.X0 = tf.nn.sigmoid(tf.matmul(self.X, self.W_i) + self.b_i)
-        self.H0 = tf.sigmoid(tf.matmul(self.X0, self._W) + tf.reshape(self._b, [struct[2]], name='H0'))  # (NxK)
+        self.H0 = tf.nn.sigmoid(tf.matmul(self.X0, self._W) + tf.reshape(self._b, [struct[2]], name='H0'))  # (NxK)
         self.H0_T = tf.transpose(self.H0, name='H0_T')  # (KxN)
         #  _beta_s = (H_T*H + I/om)^(-1)*H_T*T  (KxL)
         identity = tf.constant(np.identity(struct[2]), dtype=tf.float32)
         self._beta_s = tf.matmul(
             tf.matmul(tf.matrix_inverse(tf.matmul(self.H0_T, self.H0) + identity / omega), self.H0_T), self.X0)
-        self.embedding = tf.sigmoid(tf.matmul(self.X0, tf.transpose(self._beta_s)))
-
+        # self.embedding = tf.nn.sigmoid(tf.matmul(self.X0, tf.transpose(self._beta_s)))
+        # self.embedding = self.H0
         self.newX0 = tf.matmul(self.H0, self._beta_s)
         self.newX = tf.nn.sigmoid(tf.matmul(self.newX0, self.W_o)+self.b_o)
 
@@ -83,17 +83,17 @@ class ELM_AE(object):
 
         # Loss function
         self.loss_2nd = get_2nd_loss(self.X, self.newX, config.beta)
-        self.loss_1st = get_1st_loss(self.embedding, self.adjacent_matriX)
+        self.loss_1st = get_1st_loss(self.H0, self.adjacent_matriX)
         self.loss_reg = get_reg_loss([self.W_o,self.W_i], [self.b_o,self.b_i])
         return config.gamma * self.loss_1st + config.alpha * self.loss_2nd + config.reg * self.loss_reg
 
     def save_model(self, path):
         saver = tf.train.Saver()
-        saver.save(self.sess, path)
+        saver.save(self._sess, path)
 
     def restore_model(self, path):
         saver = tf.train.Saver()
-        saver.restore(self.sess, path)
+        saver.restore(self._sess, path)
         self.is_Init = True
 
     def do_variables_init(self):
@@ -127,7 +127,7 @@ class ELM_AE(object):
         return self._sess.run(self.W, {self._x0: x, self.y: y})
 
     def get_embedding(self,data):
-        return self._sess.run(self.embedding, feed_dict=self.__get_feed_dict(data))
+        return self._sess.run(self.H0, feed_dict=self.__get_feed_dict(data))
 
     def close(self):
         self._sess.close()

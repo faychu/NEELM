@@ -12,14 +12,14 @@ class Config(object):
 
         ## the loss func is  // gamma * L1 + alpha * L2 + reg * regularTerm // 
         self.alpha = 1
-        self.gamma = 1
+        self.gamma = 0
         self.reg = 1
         ## the weight balanced value to reconstruct non-zero element more.
         self.beta = 15
         
         ## para for training
         self.batch_size = 1024
-        self.epochs_limit = 1000
+        self.epochs_limit = 5000
         self.learning_rate = 0.001
 
         

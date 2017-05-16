@@ -33,7 +33,7 @@ if __name__ == "__main__":
         model.fit(mini_batch)
         batch_n+=1
         time_consumed += time.time()-st_time
-        print('Mini-batch: %d  fit time: %.2f' % (batch_n, time_consumed))
+        # print('Mini-batch: %d  fit time: %.2f' % (batch_n, time_consumed))
         if graph_data.is_epoch_end:
             epochs+=1
             loss = 0
@@ -51,11 +51,12 @@ if __name__ == "__main__":
 
             print("Epoch: %d Loss: %.3f, Train time_consumed: %.3fs" % (epochs,loss,time_consumed))
             if epochs % 10 ==0:
-                check_link_reconstruction(embedding,graph_data,[1000,3000,5000,7000,9000,10000])
+                print(model.get_embedding(mini_batch))
+                check_link_reconstruction(embedding,graph_data,[500, 1000,3000,5000,7000,9000,10000])
 
-            if (loss > last_loss+3000):
+            if (loss > last_loss+5000):
                 converge_count += 1
-                if converge_count > 10:
+                if converge_count > 100:
                     print("model converge terminating")
                     # check_link_reconstruction(embedding, graph_data, [1000,3000,5000,7000,9000,10000])
                     break
