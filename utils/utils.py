@@ -17,7 +17,9 @@ def getSimilarity(result):
 def check_link_reconstruction(embedding, graph_data, check_index):
     def get_precisionK(embedding, data, max_index):
         print("get precisionK...")
-        similarity = getSimilarity(embedding).reshape(-1)
+        norm = np.sqrt(np.sum(embedding*embedding, axis=1)).reshape([-1,1])
+        norm_embedding = embedding/norm
+        similarity = getSimilarity(norm_embedding).reshape(-1)
         sortedInd = np.argsort(similarity)
         cur = 0
         count = 0
@@ -39,5 +41,6 @@ def check_link_reconstruction(embedding, graph_data, check_index):
     precisionK = get_precisionK(embedding, graph_data, np.max(check_index))
     for index in check_index:
         print("precisonK[%d] %.2f" % (index, precisionK[index - 1]))
+
 
     #############################################
