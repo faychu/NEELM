@@ -14,10 +14,12 @@ from utils.utils import *
 if __name__ == "__main__":
     config = Config()
     graph_data = Graph(config.file_path)
+    graph_data.load_label_data(config.label_file_path)
     config.struct[0] = graph_data.N
     sess = tf.Session()
 
     print(graph_data.adj_matrix)
+
 
     model = ELM_AE(sess,config)
     model.do_variables_init()
@@ -29,6 +31,8 @@ if __name__ == "__main__":
     epochs = 0
     while(True):
         mini_batch= graph_data.sample(config.batch_size)
+        # print(mini_batch.X)
+        # print(mini_batch.adjacent_matriX)
         st_time = time.time()
         model.fit(mini_batch)
         batch_n+=1
@@ -47,16 +51,19 @@ if __name__ == "__main__":
                     embedding= np.vstack((embedding,model.get_embedding(mini_batch)))
 
                 if graph_data.is_epoch_end:
+                    # print(embedding)
                     break
 
             print("Epoch: %d Loss: %.3f, Train time_consumed: %.3fs" % (epochs,loss,time_consumed))
             if epochs % 10 ==0:
-                print(model.get_embedding(mini_batch))
-                check_link_reconstruction(embedding,graph_data,[500, 1000,3000,5000,7000,9000,10000])
+                print(embedding)
+                check_link_reconstruction(embedding,graph_data,[100,300,500,700,900,1000])
+                data = graph_data.sample(graph_data.N, with_label=True)
+                check_classification(model.get_embedding(data), data.label, test_ratio=[0.9, 0.7, 0.5, 0.3, 0.1])
 
-            if (loss > last_loss+5000):
+            if (loss > last_loss):
                 converge_count += 1
-                if converge_count > 100:
+                if converge_count > 10:
                     print("model converge terminating")
                     # check_link_reconstruction(embedding, graph_data, [1000,3000,5000,7000,9000,10000])
                     break

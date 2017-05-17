@@ -2,17 +2,19 @@ class Config(object):
     def __init__(self):
         # self.input_len = 784
         # self.hidden_num = 200
-        self.batch_size = 300
+
         self.struct = [None, 500, 100] # input_len=none, h1 = 500, h2 = 100
 
         ## graph data
-        self.file_path = "./GraphData/ca-Grqc.txt"
+        self.file_path = "./GraphData/citeseer/graph.txt"
+        self.label_file_path = "GraphData/citeseer/group.txt"
+
         ## embedding data
-        self.embedding_filename = "ca-Grac" 
+        self.embedding_filename = "citeseer"
 
         ## the loss func is  // gamma * L1 + alpha * L2 + reg * regularTerm // 
-        self.alpha = 1
-        self.gamma = 0
+        self.alpha = 5
+        self.gamma = 1
         self.reg = 1
         ## the weight balanced value to reconstruct non-zero element more.
         self.beta = 15

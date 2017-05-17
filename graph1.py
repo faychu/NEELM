@@ -11,7 +11,7 @@ class Graph(object):
         self.E = int(firstLine[1])
         self.adj_matrix = np.zeros([self.N, self.N], np.int_)
         for line in fin:
-            line = line.strip().split(' ')
+            line = line.strip().split('\t')
             self.adj_matrix[int(line[0]),int(line[1])] += 1
             self.adj_matrix[int(line[1]),int(line[0])] += 1
         fin.close()
@@ -19,13 +19,15 @@ class Graph(object):
         print("getData done")
         print("Vertexes : %d  Edges : %d " % (self.N, self.E))
 
-    # def load_label_data(self, filename):
-    #     self.label = np.zeros([self.N], np.int_)
-    #     with open(filename, 'r') as fin:
-    #         for line in fin:
-    #             line = line.
+    def load_label_data(self, filename):
+        self.label = np.zeros([self.N], np.int_)
+        with open(filename, "r") as fin:
+            lines = fin.readlines()
+            for line in lines:
+                line = line.strip().split()
+                self.label[int(line[0])] = int(line[1])
 
-    def sample(self, batch_size, do_shuffle=True):
+    def sample(self, batch_size, do_shuffle=True,with_label = False):
         if self.is_epoch_end:
             if do_shuffle:
                 np.random.shuffle(self.__order)
@@ -39,6 +41,8 @@ class Graph(object):
         index = self.__order[self.st:en]
         mini_batch.X = self.adj_matrix[index]
         mini_batch.adjacent_matriX = self.adj_matrix[index][:, index]
+        if with_label:
+            mini_batch.label = self.label[index]
         if (en == self.N):
             en = 0
             self.is_epoch_end = True
