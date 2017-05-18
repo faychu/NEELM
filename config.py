@@ -6,8 +6,8 @@ class Config(object):
         self.struct = [None, 500, 100] # input_len=none, h1 = 500, h2 = 100
 
         ## graph data
-        self.file_path = "./GraphData/citeseer/graph.txt"
-        self.label_file_path = "GraphData/citeseer/group.txt"
+        self.file_path = "./GraphData/cora/graph.txt"
+        self.label_file_path = "GraphData/cora/group.txt"
 
         ## embedding data
         self.embedding_filename = "citeseer"
