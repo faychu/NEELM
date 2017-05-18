@@ -3,7 +3,7 @@
 
 from config import Config
 from graph1 import Graph
-from ELM_AE_o import ELM_AE
+from ML_ELM import ELM_AE
 import time
 import scipy.io as sio
 import numpy as np
@@ -57,7 +57,7 @@ if __name__ == "__main__":
             print("Epoch: %d Loss: %.3f, Train time_consumed: %.3fs" % (epochs,loss,time_consumed))
             if epochs % 10 ==0:
                 print(embedding)
-                check_link_reconstruction(embedding,graph_data,[100,300,500,700,900,1000])
+                # check_link_reconstruction(embedding,graph_data,[100,300,500,700,900,1000])
                 data = graph_data.sample(graph_data.N, with_label=True)
                 check_classification(model.get_embedding(data), data.label, test_ratio=[0.9, 0.7, 0.5, 0.3, 0.1])
 
